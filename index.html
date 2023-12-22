@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Displaying fetched data</title>
+</head>
+<body>
+    <div id="output"></div>
+
+    <script>
+        const url = "https://s3.amazonaws.com/open-to-cors/assignment.json";
+
+        fetch(url)
+            .then(response => response.json())
+            .then(data => {
+                if (data.products) {
+                    const productIds = Object.keys(data.products);
+                    const dataArray = productIds.map(productId => data.products[productId]);
+                    const sortedData = dataArray.sort((a, b) => b.popularity - a.popularity);
+
+                    const outputElement = document.getElementById('output');
+                    sortedData.forEach(product => {
+                        const productInfo = `
+                            <p><strong>Title:</strong> ${product.title}</p>
+                            <p><strong>Price:</strong> ${product.price}</p>
+                            <p><strong>Popularity:</strong> ${product.popularity}</p>
+                            <p><strong>Subcategory:</strong> ${product.subcategory}</p>
+                            <hr>
+                        `;
+                        outputElement.innerHTML += productInfo;
+                    });
+                } else {
+                    console.error("Data is not in the expected format (missing 'products' key).");
+                }
+            })
+            .catch(error => {
+                console.error("Error fetching data:", error);
+            });
+    </script>
+</body>
+</html>
